@@ -3,10 +3,12 @@ import shaka from 'shaka-player';
 
 interface VideoPlayerProps {
   url: string;
-  title: string; // Add title prop
+  title: string;
+  isPlaying: boolean;
+  onPlay: () => void;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, isPlaying, onPlay }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<shaka.Player | null>(null);
 
@@ -16,14 +18,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title }) => {
     const init = async () => {
       if (!mounted) return;
 
-      // Install polyfills and configure Shaka
       shaka.polyfill.installAll();
 
       if (shaka.Player.isBrowserSupported() && videoRef.current) {
         try {
           const player = new shaka.Player(videoRef.current);
-
-          // Configure player to support HLS
           player.configure({
             streaming: {
               useNativeHlsOnSafari: true
@@ -46,7 +45,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title }) => {
       mounted = false;
       playerRef.current?.destroy();
     };
-  }, [url]); // Add url to dependency array
+  }, [url]);
+
+  // Handle play/pause based on isPlaying prop
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
+
+  // Handle play event
+  const handlePlay = () => {
+    onPlay();
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -55,8 +70,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title }) => {
         ref={videoRef}
         style={{ width: '100%', height: 'auto' }}
         controls
-        autoPlay
         muted
+        onPlay={handlePlay}
       />
     </div>
   );
