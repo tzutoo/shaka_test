@@ -3,8 +3,8 @@ import VideoPlayer from './components/VideoPlayer';
 
 const App = () => {
   const [currentPlaying, setCurrentPlaying] = useState<string | null>(null);
-  const dashUrl = 'https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd';
-  const hlsUrl = 'https://previewvod-hamivideo.cdn.hinet.net/vod/hamivideo2/hamivideo-2024-2024100375_p_001/_/hd_6840-hls-ae-all-ma-6sv2/index.m3u8';
+  const dashUrl = 'http://dash.akamaized.net/dash264/TestCases/1c/qualcomm/1/MultiRate.mpd';
+  const hlsUrl = 'http://externaltests.dev.kaltura.com/player/sandBox/alex-sandBox/master.m3u8';
 
   return (
     <div style={{
